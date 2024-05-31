@@ -34,11 +34,11 @@ public:
 	}
 
 	bool isLengthZeroScore(int longStrLength, int shortStrLength) {
-		return longStrLength / 2 > shortStrLength;
+		return longStrLength / 2 >= shortStrLength;
 	}
 
 	int getLengthPartScore(int longStrLength, int shortStrLength) {
 		int gap = longStrLength - shortStrLength;
-		return 60 - 60 * gap / shortStrLength;
+		return 60 - 60 * (double)gap / (double)shortStrLength;
 	}
 };
