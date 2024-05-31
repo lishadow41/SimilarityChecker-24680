@@ -1,25 +1,53 @@
 #include "pch.h"
 #include "../TDD_SimilarityChecker/similarity_checker.cpp"
 
-class SimilarityCheckFixture : public testing::Test
+class SimilarityCheckParamFixture : public testing::TestWithParam<std::tuple<string, string, int>>
 {
 public:
 	SimilarityChecker checker;
 };
 
-TEST_F(SimilarityCheckFixture, SameLength) {
+TEST_F(SimilarityCheckParamFixture, SameLength) {
 	EXPECT_EQ(checker.getLengthScore("ABD", "GED"), 60);
 }
 
-TEST_F(SimilarityCheckFixture, LengthScoreZero) {
-	EXPECT_EQ(checker.getLengthScore("A", "BB"), 0);
-	EXPECT_EQ(checker.getLengthScore("As", "BBdfa"), 0);
-	EXPECT_EQ(checker.getLengthScore("Aasdfdafd", "BB"), 0);
+class SimilarityCheckLengthZeroScoreParamFixture : public SimilarityCheckParamFixture {
+};
+
+TEST_P(SimilarityCheckLengthZeroScoreParamFixture, LengthScoreZero) {
+	string firstString = std::get<0>(GetParam());
+	string secondString = std::get<1>(GetParam());
+	int expectedScore = std::get<2>(GetParam());
+	EXPECT_EQ(checker.getLengthScore(firstString, secondString), expectedScore);
 }
 
-TEST_F(SimilarityCheckFixture, LengthPartScore) {
-	EXPECT_EQ(checker.getLengthScore("AAABB", "BAA"), 20);
-	EXPECT_EQ(checker.getLengthScore("AA", "AAE"), 30);
-	EXPECT_EQ(checker.getLengthScore("AAABBvdfe", "BAAdfeg"), 42);
-	EXPECT_EQ(checker.getLengthScore("AAdfsf", "AAdfadsfasE"), 10);
+INSTANTIATE_TEST_CASE_P(
+	SimilarityCheckLengthZeroScoreParamFixtures,
+	SimilarityCheckLengthZeroScoreParamFixture,
+	::testing::Values(
+		std::make_tuple("A", "BB", 0),
+		std::make_tuple("As", "BBdfa", 0),
+		std::make_tuple("Aasdfdafd", "BB", 0)
+	)
+);
+
+class SimilarityCheckLengthPartScoreParamFixture : public SimilarityCheckParamFixture {
+};
+
+TEST_P(SimilarityCheckLengthPartScoreParamFixture, LengthPartScore) {
+	string firstString = std::get<0>(GetParam());
+	string secondString = std::get<1>(GetParam());
+	int expectedScore = std::get<2>(GetParam());
+	EXPECT_EQ(checker.getLengthScore(firstString, secondString), expectedScore);
 }
+
+INSTANTIATE_TEST_CASE_P(
+	SimilarityCheckLengthPartScoreParamFixtures,
+	SimilarityCheckLengthPartScoreParamFixture,
+	::testing::Values(
+		std::make_tuple("AAABB", "BAA", 20),
+		std::make_tuple("AA", "AAE", 30),
+		std::make_tuple("AAABBvdfe", "BAAdfeg", 42),
+		std::make_tuple("AAdfsf", "AAdfadsfasE", 10)
+	)
+);
