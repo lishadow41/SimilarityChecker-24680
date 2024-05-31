@@ -1,4 +1,5 @@
 #include <string>
+#include <utility>
 using namespace std;
 
 class SimilarityChecker
@@ -8,21 +9,36 @@ public:
 	virtual ~SimilarityChecker() = default;
 
 public:
-	int check(const string& a, const string& b) {
-		if (a.length() == b.length()) return 60;
+	int getLengthScore(const string& firstStr, const string& secondStr) {
+		int longLength = getLongLength(firstStr, secondStr);
+		int shortLength = getShortLength(firstStr, secondStr);
+		return getLengthScore(longLength, shortLength);
+	}
 
-		int longLength = a.length();
-		int shortLength = b.length();
-		if (longLength < shortLength) {
-			int temp = longLength;
-			longLength = shortLength;
-			shortLength = temp;
-		}
+	int getLengthScore(int longStrLength, int shortStrLength) {
+		if (isLengthSame(longStrLength, shortStrLength)) return 60;
+		if (isLengthZeroScore(longStrLength, shortStrLength)) return 0;
+		return getLengthPartScore(longStrLength, shortStrLength);
+	}
 
-		if (longLength / 2 >= shortLength) return 0;
+	int getLongLength(const std::string& firstStr, const std::string& secondStr) {
+		return max(firstStr.length(), secondStr.length());
+	}
 
-		int gap = longLength - shortLength;
-		int score = 60 - 60 * gap / shortLength;
-		return score;
+	int getShortLength(const std::string& firstStr, const std::string& secondStr) {
+		return min(firstStr.length(), secondStr.length());
+	}
+
+	bool isLengthSame(int longStrLength, int shortStrLength) {
+		return longStrLength == shortStrLength;
+	}
+
+	bool isLengthZeroScore(int longStrLength, int shortStrLength) {
+		return longStrLength / 2 > shortStrLength;
+	}
+
+	int getLengthPartScore(int longStrLength, int shortStrLength) {
+		int gap = longStrLength - shortStrLength;
+		return 60 - 60 * gap / shortStrLength;
 	}
 };

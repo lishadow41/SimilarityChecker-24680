@@ -1,26 +1,21 @@
 #include "pch.h"
 #include "../TDD_SimilarityChecker/similarity_checker.cpp"
 
-TEST(SimilarityChecker, SameLength) {
+class SimilarityCheckFixture : public testing::Test
+{
+public:
 	SimilarityChecker checker;
-	int n = checker.check("ABD", "GED");
-	EXPECT_EQ(n, 60);
+};
+
+TEST_F(SimilarityCheckFixture, SameLength) {
+	EXPECT_EQ(checker.getLengthScore("ABD", "GED"), 60);
 }
 
-TEST(SimilarityChecker, LengthScoreZero) {
-	SimilarityChecker checker;
-	int n = checker.check("A", "BB");
-	EXPECT_EQ(n, 0);
+TEST_F(SimilarityCheckFixture, LengthScoreZero) {
+	EXPECT_EQ(checker.getLengthScore("A", "BB"), 0);
 }
 
-TEST(SimilarityChecker, LengthPartScore1) {
-	SimilarityChecker checker;
-	int n = checker.check("AAABB", "BAA");
-	EXPECT_EQ(n, 20);
-}
-
-TEST(SimilarityChecker, LengthPartScore2) {
-	SimilarityChecker checker;
-	int n = checker.check("AA", "AAE");
-	EXPECT_EQ(n, 30);
+TEST_F(SimilarityCheckFixture, LengthPartScore) {
+	EXPECT_EQ(checker.getLengthScore("AAABB", "BAA"), 20);
+	EXPECT_EQ(checker.getLengthScore("AA", "AAE"), 30);
 }
